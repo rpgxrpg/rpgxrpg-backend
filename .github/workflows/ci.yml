@@ -25,6 +25,8 @@ jobs:
 
       - name: Gera Prisma Client
         run: npx prisma generate
+        env:
+          DATABASE_URL: "postgresql://fake:fake@localhost:5432/fake"
 
       - name: Verifica compilação TypeScript
         run: npx tsc --noEmit
