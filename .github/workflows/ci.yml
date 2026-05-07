@@ -23,5 +23,8 @@ jobs:
       - name: Instala dependências
         run: npm ci
 
+      - name: Gera Prisma Client
+        run: npx prisma generate
+
       - name: Verifica compilação TypeScript
         run: npx tsc --noEmit
