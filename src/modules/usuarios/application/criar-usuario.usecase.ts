@@ -1,3 +1,4 @@
+import { IEmailService } from "../domain/email-service.interface"
 import { IHashService } from "../domain/hash-service.interface"
 import { ITokenService } from "../domain/token-service.interface"
 import { IUsuarioRepository } from "../domain/usuario-repository.interface"
@@ -7,7 +8,8 @@ export class CriarUsuarioUseCase {
     constructor(
         private usuarioRepository: IUsuarioRepository,
         private hashService: IHashService,
-        private tokenService: ITokenService
+        private tokenService: ITokenService,
+        private emailService: IEmailService,
     ) {}
 
     async executar(nome: string, email: string, senha: string): Promise<string> {
@@ -20,6 +22,11 @@ export class CriarUsuarioUseCase {
         const usuario: UsuarioEntity = { nome, email, senha: hash }
 
         const usuarioSalvo = await this.usuarioRepository.salvar(usuario)
+        
+        const usuarioEmail = usuarioSalvo.email
+        const tokenEmail = this.tokenService.gerar({ email: usuarioEmail })
+
+        await this.emailService.enviar(usuarioEmail, "Verificação de Email", `Clique aqui para confirmar: http://localhost:3000/api/usuarios/confirmar?token=${tokenEmail}`)
 
         return this.tokenService.gerar({ id: usuarioSalvo.id })
     }

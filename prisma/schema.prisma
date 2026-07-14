@@ -19,5 +19,6 @@ model Usuario {
     nome_usuario       String
     email     String   @unique 
     senha     String
+    verificado Boolean @default(false)
   @@map("usuario") 
  }
