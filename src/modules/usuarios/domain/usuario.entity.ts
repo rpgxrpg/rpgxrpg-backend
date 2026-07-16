@@ -3,4 +3,5 @@ export type UsuarioEntity = {
     nome: string
     email: string
     senha: string
+    verificado?: boolean
 }
