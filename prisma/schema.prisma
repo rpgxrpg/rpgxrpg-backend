@@ -14,11 +14,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum StatusCampanha {
+  ativa
+  suspensa
+  encerrada
+}
+
 model Usuario {
     id        Int      @id @default(autoincrement())
     nome_usuario       String
     email     String   @unique 
     senha     String
     verificado Boolean @default(false)
+    campanhasMestradas Campanha[]
   @@map("usuario") 
  }
+
+model Campanha {
+  id         Int            @id @default(autoincrement())
+  numero     Int
+  titulo     String
+  criado_por Int
+  criador    Usuario        @relation(fields: [criado_por], references: [id])
+  status     StatusCampanha
+}
