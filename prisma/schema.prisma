@@ -20,21 +20,42 @@ enum StatusCampanha {
   encerrada
 }
 
+enum TipoUsuario {
+  mestre
+  jogador
+}
+
 model Usuario {
-    id        Int      @id @default(autoincrement())
-    nome_usuario       String
-    email     String   @unique 
-    senha     String
-    verificado Boolean @default(false)
-    campanhasMestradas Campanha[]
-  @@map("usuario") 
- }
+  id                 Int               @id @default(autoincrement())
+  nome_usuario       String
+  email              String            @unique
+  senha              String
+  verificado         Boolean           @default(false)
+  campanhasMestradas Campanha[]
+  participacoes      UsuarioCampanha[]
+
+  @@map("usuario")
+}
 
 model Campanha {
-  id         Int            @id @default(autoincrement())
-  numero     Int
-  titulo     String
-  criado_por Int
-  criador    Usuario        @relation(fields: [criado_por], references: [id])
-  status     StatusCampanha
+  id            Int               @id @default(autoincrement())
+  numero        Int
+  titulo        String
+  criado_por    Int
+  criador       Usuario           @relation(fields: [criado_por], references: [id])
+  status        StatusCampanha
+  participantes UsuarioCampanha[]
+  @@map("campanha")
+}
+
+model UsuarioCampanha {
+  usuario_id  Int
+  campanha_id Int
+  papel       TipoUsuario
+
+  usuario     Usuario  @relation(fields: [usuario_id], references: [id])
+  campanha    Campanha @relation(fields: [campanha_id], references: [id])
+
+  @@id([usuario_id, campanha_id])
+  @@map("usuario_campanha")
 }
