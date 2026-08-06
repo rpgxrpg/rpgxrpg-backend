@@ -8,6 +8,9 @@ export class CriarCampanhaController {
         try {
             const { titulo, numero, status } = req.body;
             const criado_por = (req as any).userId;
+            if (typeof criado_por !== 'number') {
+               return res.status(401).json({ message: 'ID de Usuario invalido.' });
+            }
             const campanha = await this.criarCampanhaUseCase.executar(numero, titulo, criado_por, status);
             return res.status(201).json(campanha);
         } catch (error: any) {

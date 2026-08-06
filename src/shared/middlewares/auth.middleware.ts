@@ -7,7 +7,10 @@ export function criarAuthMiddleware(tokenService: ITokenService) {
         if (!authHeader) {
             return res.status(401).json({ message: 'Token nao fornecido' });
         }
-        const token = authHeader.split(' ')[1];
+        if (!authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'Token nao fornecido' });
+        }
+        const token = authHeader.slice(7);
         try {
             const payload = tokenService.verificar(token);
             (req as any).userId = (payload as { id: number }).id;
