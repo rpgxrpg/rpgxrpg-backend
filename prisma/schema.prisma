@@ -20,6 +20,12 @@ enum StatusCampanha {
   encerrada
 }
 
+enum StatusConvite {
+  aceito
+  recusado
+  pendente
+}
+
 enum TipoUsuario {
   mestre
   jogador
@@ -33,7 +39,7 @@ model Usuario {
   verificado         Boolean           @default(false)
   campanhasMestradas Campanha[]
   participacoes      UsuarioCampanha[]
-
+  convites           Convite[]
   @@map("usuario")
 }
 
@@ -45,6 +51,7 @@ model Campanha {
   criador       Usuario           @relation(fields: [criado_por], references: [id])
   status        StatusCampanha
   participantes UsuarioCampanha[]
+  convites      Convite[]
   @@map("campanha")
 }
 
@@ -58,4 +65,14 @@ model UsuarioCampanha {
 
   @@id([usuario_id, campanha_id])
   @@map("usuario_campanha")
+}
+
+model Convite {
+  id            Int               @id @default(autoincrement())
+  status        StatusConvite
+  usuario_id    Int
+  campanha_id   Int
+  convidado     Usuario  @relation(fields: [usuario_id], references: [id])
+  campanha      Campanha @relation(fields: [campanha_id], references: [id])
+  @@map("convite")
 }
