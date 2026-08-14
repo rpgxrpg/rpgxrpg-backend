@@ -1,0 +1,35 @@
+// presentation/personagem.routes.ts — arquivo inteiro atualizado
+import { Router } from 'express';
+import { PrismaClient } from '../../../generated/prisma/client';
+import { PersonagemRepositoryImplementation } from '../infrastructure/personagem-repository.impl';
+import { CriarPersonagemUseCase } from '../application/criar-personagem.usecase';
+import { CriarPersonagemController } from './criar-personagem.controller';
+import { AprovarPersonagemUseCase } from '../application/aprovar-personagem.usecase';
+import { AprovarPersonagemController } from './aprovar-personagem.controller';
+import { RejeitarPersonagemUseCase } from '../application/rejeitar-personagem.usecase';
+import { RejeitarPersonagemController } from './rejeitar-personagem.controller';
+import { CampanhaRepositoryImplementation } from '../../campanhas/infrastructure/campanha-repository.impl';
+import { criarAuthMiddleware } from '../../../shared/middlewares/auth.middleware';
+import { TokenServiceImplementation } from '../../usuarios/infrastructure/token-service.impl';
+
+const router = Router();
+const prisma = new PrismaClient();
+const personagemRepository = new PersonagemRepositoryImplementation(prisma);
+const campanhaRepository = new CampanhaRepositoryImplementation(prisma);
+const tokenService = new TokenServiceImplementation();
+const authMiddleware = criarAuthMiddleware(tokenService);
+
+const criarPersonagemUseCase = new CriarPersonagemUseCase(personagemRepository);
+const criarPersonagemController = new CriarPersonagemController(criarPersonagemUseCase);
+
+const aprovarPersonagemUseCase = new AprovarPersonagemUseCase(personagemRepository, campanhaRepository);
+const aprovarPersonagemController = new AprovarPersonagemController(aprovarPersonagemUseCase);
+
+const rejeitarPersonagemUseCase = new RejeitarPersonagemUseCase(personagemRepository, campanhaRepository);
+const rejeitarPersonagemController = new RejeitarPersonagemController(rejeitarPersonagemUseCase);
+
+router.post("/", authMiddleware, (req, res) => criarPersonagemController.handle(req, res));
+router.post("/:personagemId/aprovar", authMiddleware, (req, res) => aprovarPersonagemController.handle(req, res));
+router.post("/:personagemId/rejeitar", authMiddleware, (req, res) => rejeitarPersonagemController.handle(req, res));
+
+export default router;

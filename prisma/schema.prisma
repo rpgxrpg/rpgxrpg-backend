@@ -20,6 +20,38 @@ enum StatusCampanha {
   encerrada
 }
 
+enum StatusAprovacao {
+  pendente
+  aprovada
+  rejeitada
+}
+
+enum NivelHunter {
+  iniciante
+  veterano
+  uma_estrela
+  duas_estrelas
+  tres_estrelas
+}
+
+
+
+enum TipoAura {
+  reforco
+  transmutacao
+  emissao
+  manipulacao
+  materializacao
+  especializacao
+}
+
+
+enum TipoFicha {
+  personagem
+  invocacao
+  npc
+}
+
 enum StatusConvite {
   aceito
   recusado
@@ -40,6 +72,7 @@ model Usuario {
   campanhasMestradas Campanha[]
   participacoes      UsuarioCampanha[]
   convites           Convite[]
+  personagens        Personagem[]
   @@map("usuario")
 }
 
@@ -52,6 +85,7 @@ model Campanha {
   status        StatusCampanha
   participantes UsuarioCampanha[]
   convites      Convite[]
+  personagens   Personagem[]
   @@map("campanha")
 }
 
@@ -75,4 +109,32 @@ model Convite {
   convidado     Usuario  @relation(fields: [usuario_id], references: [id])
   campanha      Campanha @relation(fields: [campanha_id], references: [id])
   @@map("convite")
+}
+
+model Personagem {
+  id                Int             @id @default(autoincrement())
+  nome              String
+  usuario_id        Int?
+  usuario           Usuario?        @relation(fields: [usuario_id], references: [id])
+  campanha_id Int
+  campanha    Campanha @relation(fields: [campanha_id], references: [id])
+  tipo_ficha        TipoFicha
+  status_aprovacao  StatusAprovacao
+  nivel_hunter      NivelHunter
+  afinidade_aura    TipoAura
+  potencia_aura     Int
+  dominio_nen       Int
+  recuperacao_aura  Int
+  recuperacao_zetsu Int
+  forca             Int
+  destreza          Int
+  vigor             Int
+  carisma           Int
+  manipulacao       Int
+  autocontrole      Int
+  inteligencia      Int
+  raciocinio        Int
+  determinacao      Int
+
+  @@map("personagem")
 }
