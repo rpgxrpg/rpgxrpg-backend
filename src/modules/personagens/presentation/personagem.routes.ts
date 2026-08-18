@@ -19,7 +19,7 @@ const campanhaRepository = new CampanhaRepositoryImplementation(prisma);
 const tokenService = new TokenServiceImplementation();
 const authMiddleware = criarAuthMiddleware(tokenService);
 
-const criarPersonagemUseCase = new CriarPersonagemUseCase(personagemRepository);
+const criarPersonagemUseCase = new CriarPersonagemUseCase(personagemRepository, campanhaRepository);
 const criarPersonagemController = new CriarPersonagemController(criarPersonagemUseCase);
 
 const aprovarPersonagemUseCase = new AprovarPersonagemUseCase(personagemRepository, campanhaRepository);

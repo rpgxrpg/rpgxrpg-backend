@@ -1,5 +1,4 @@
-import { StatusAprovacao, StatusConvite } from "../../../generated/prisma/enums";
-import { prismaVersion } from "../../../generated/prisma/internal/prismaNamespace";
+import { StatusAprovacao } from "../../../generated/prisma/enums";
 import { ICampanhaRepository } from "../../campanhas/domain/campanha-repository.interface";
 import { IPersonagemRepository } from "../domain/personagem-repository.interface";
 

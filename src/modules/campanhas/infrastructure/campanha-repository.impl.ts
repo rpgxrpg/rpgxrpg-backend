@@ -28,6 +28,18 @@ export class CampanhaRepositoryImplementation implements ICampanhaRepository {
         return { id: created.id, titulo: created.titulo, numero: created.numero, criado_por: created.criado_por, status: created.status };
     }
 
+    async ehParticipante(campanhaId: number, usuarioId: number): Promise<boolean> {
+        const participante = await this.prisma.usuarioCampanha.findUnique({
+            where: {
+                usuario_id_campanha_id: {
+                    usuario_id: usuarioId,
+                    campanha_id: campanhaId,
+                },
+            },
+        });
+        return participante !== null;
+    }
+
     async buscarPorId(campanhaId: number): Promise<CampanhaEntity | null> {
         const campanha = await this.prisma.campanha.findUnique({ where: { id: campanhaId } });
         if (!campanha) {
