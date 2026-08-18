@@ -11,7 +11,7 @@ app.use(express.json())
 app.use("/api/usuarios", usuarioRoutes)
 app.use("/api/campanhas", campanhaRoutes)
 app.use("/api/convites", conviteRoutes)
-app.use("/api/personagens", personagemRoutes)
+app.use("/api", personagemRoutes)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 export default app

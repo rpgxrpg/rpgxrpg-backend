@@ -1,4 +1,3 @@
-// presentation/personagem.routes.ts — arquivo inteiro atualizado
 import { Router } from 'express';
 import { PrismaClient } from '../../../generated/prisma/client';
 import { PersonagemRepositoryImplementation } from '../infrastructure/personagem-repository.impl';
@@ -8,6 +7,8 @@ import { AprovarPersonagemUseCase } from '../application/aprovar-personagem.usec
 import { AprovarPersonagemController } from './aprovar-personagem.controller';
 import { RejeitarPersonagemUseCase } from '../application/rejeitar-personagem.usecase';
 import { RejeitarPersonagemController } from './rejeitar-personagem.controller';
+import { CriarNpcUseCase } from '../application/criar-npc.usecase';
+import { CriarNpcController } from './criar-npc.controller';
 import { CampanhaRepositoryImplementation } from '../../campanhas/infrastructure/campanha-repository.impl';
 import { criarAuthMiddleware } from '../../../shared/middlewares/auth.middleware';
 import { TokenServiceImplementation } from '../../usuarios/infrastructure/token-service.impl';
@@ -28,8 +29,12 @@ const aprovarPersonagemController = new AprovarPersonagemController(aprovarPerso
 const rejeitarPersonagemUseCase = new RejeitarPersonagemUseCase(personagemRepository, campanhaRepository);
 const rejeitarPersonagemController = new RejeitarPersonagemController(rejeitarPersonagemUseCase);
 
-router.post("/", authMiddleware, (req, res) => criarPersonagemController.handle(req, res));
-router.post("/:personagemId/aprovar", authMiddleware, (req, res) => aprovarPersonagemController.handle(req, res));
-router.post("/:personagemId/rejeitar", authMiddleware, (req, res) => rejeitarPersonagemController.handle(req, res));
+const criarNpcUseCase = new CriarNpcUseCase(personagemRepository, campanhaRepository);
+const criarNpcController = new CriarNpcController(criarNpcUseCase);
+
+router.post("/personagens", authMiddleware, (req, res) => criarPersonagemController.handle(req, res));
+router.post("/personagens/:personagemId/aprovar", authMiddleware, (req, res) => aprovarPersonagemController.handle(req, res));
+router.post("/personagens/:personagemId/rejeitar", authMiddleware, (req, res) => rejeitarPersonagemController.handle(req, res));
+router.post("/campanhas/:campanhaId/npcs", authMiddleware, (req, res) => criarNpcController.handle(req, res));
 
 export default router;
