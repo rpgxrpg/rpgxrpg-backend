@@ -136,5 +136,10 @@ model Personagem {
   raciocinio        Int
   determinacao      Int
 
+  personagem_pai_id Int?
+  personagemPai      Personagem?  @relation("Invocacao", fields: [personagem_pai_id], references: [id])
+  invocacoes         Personagem[] @relation("Invocacao")
+
+
   @@map("personagem")
 }

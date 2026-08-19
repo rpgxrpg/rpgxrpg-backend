@@ -22,4 +22,5 @@ export type PersonagemEntity = {
   inteligencia: number;
   raciocinio: number;
   determinacao: number;
+  personagem_pai_id?: number | null;
 }

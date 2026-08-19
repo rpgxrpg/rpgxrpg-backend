@@ -12,6 +12,8 @@ import { CriarNpcController } from './criar-npc.controller';
 import { CampanhaRepositoryImplementation } from '../../campanhas/infrastructure/campanha-repository.impl';
 import { criarAuthMiddleware } from '../../../shared/middlewares/auth.middleware';
 import { TokenServiceImplementation } from '../../usuarios/infrastructure/token-service.impl';
+import { CriarInvocacaoUseCase } from '../application/criar-invocacao.usecase';
+import { CriarInvocacaoController } from './criar-invocacao.controller';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -32,9 +34,13 @@ const rejeitarPersonagemController = new RejeitarPersonagemController(rejeitarPe
 const criarNpcUseCase = new CriarNpcUseCase(personagemRepository, campanhaRepository);
 const criarNpcController = new CriarNpcController(criarNpcUseCase);
 
+const criarInvocacaoUseCase = new CriarInvocacaoUseCase(personagemRepository);
+const criarInvocacaoController = new CriarInvocacaoController(criarInvocacaoUseCase);
+
 router.post("/personagens", authMiddleware, (req, res) => criarPersonagemController.handle(req, res));
 router.post("/personagens/:personagemId/aprovar", authMiddleware, (req, res) => aprovarPersonagemController.handle(req, res));
 router.post("/personagens/:personagemId/rejeitar", authMiddleware, (req, res) => rejeitarPersonagemController.handle(req, res));
 router.post("/campanhas/:campanhaId/npcs", authMiddleware, (req, res) => criarNpcController.handle(req, res));
+router.post("/personagens/:personagemId/invocacoes", authMiddleware, (req, res) => criarInvocacaoController.handle(req, res));
 
 export default router;
