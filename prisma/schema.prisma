@@ -145,6 +145,32 @@ model Personagem {
   xp_nen_total      Int @default(0)
   xp_nen_gasto      Int @default(0)
 
+  alteracoes_pendentes AlteracaoPendente[]
 
   @@map("personagem")
+}
+
+model AlteracaoPendente {
+  id             Int      @id @default(autoincrement())
+  personagem_id  Int
+
+  forca          Int?
+  destreza       Int?
+  vigor          Int?
+  carisma        Int?
+  manipulacao    Int?
+  autocontrole   Int?
+  inteligencia   Int?
+  raciocinio     Int?
+  determinacao   Int?
+  potencia_aura  Int?
+  dominio_nen    Int?
+
+  xp_livre_gasto Int      @default(0)
+  xp_nen_gasto   Int      @default(0)
+  criado_em      DateTime @default(now())
+
+  personagem Personagem @relation(fields: [personagem_id], references: [id])
+
+  @@map("alteracao_pendente")
 }
