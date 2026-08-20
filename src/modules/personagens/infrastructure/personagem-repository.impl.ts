@@ -22,4 +22,12 @@ export class PersonagemRepositoryImplementation implements IPersonagemRepository
             data:  { status_aprovacao: status }
         })
     }
+
+    async atualizarXpLivre(id: number, novoTotal: number): Promise<void> {
+        await this.prisma.personagem.update({ where: { id }, data: { xp_livre_total: novoTotal } })
+    }
+    
+    async atualizarXpNen(id: number, novoTotal: number): Promise<void> {
+        await this.prisma.personagem.update({ where: { id }, data: { xp_nen_total: novoTotal } })
+    }
 }

@@ -140,6 +140,11 @@ model Personagem {
   personagemPai      Personagem?  @relation("Invocacao", fields: [personagem_pai_id], references: [id])
   invocacoes         Personagem[] @relation("Invocacao")
 
+  xp_livre_total    Int @default(0)
+  xp_livre_gasto    Int @default(0)
+  xp_nen_total      Int @default(0)
+  xp_nen_gasto      Int @default(0)
+
 
   @@map("personagem")
 }

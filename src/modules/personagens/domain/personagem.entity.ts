@@ -23,4 +23,8 @@ export type PersonagemEntity = {
   raciocinio: number;
   determinacao: number;
   personagem_pai_id?: number | null;
+  xp_livre_total: number;
+  xp_livre_gasto: number;
+  xp_nen_total: number;
+  xp_nen_gasto: number;
 }
