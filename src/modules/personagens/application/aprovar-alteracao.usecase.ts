@@ -1,4 +1,4 @@
-import { ICampanhaRepository } from "../../campanhas/domain/campanha-repository.interface";
+import { ValidarMestreDaCampanha } from "../../../shared/application/validar-mestre-da-campanha.usecase";
 import { IAlteracaoPendenteRepository } from "../domain/alteracao-pendente-repository.interface";
 import { AlteracaoPendenteEntity } from "../domain/alteracao-pendente.entity";
 import { CamposAtributoPersonagem, IPersonagemRepository } from "../domain/personagem-repository.interface";
@@ -21,7 +21,7 @@ export class AprovarAlteracaoUseCase {
     constructor(
         private alteracaoPendenteRepository: IAlteracaoPendenteRepository,
         private personagemRepository: IPersonagemRepository,
-        private campanhaRepository: ICampanhaRepository,
+        private validarMestreDaCampanha: ValidarMestreDaCampanha,
     ) {}
 
     async executar(alteracaoId: number, userId: number): Promise<void> {
@@ -35,14 +35,7 @@ export class AprovarAlteracaoUseCase {
             throw new Error("Personagem nao encontrado");
         }
 
-        const campanha = await this.campanhaRepository.buscarPorId(personagem.campanha_id);
-        if (!campanha) {
-            throw new Error("Campanha nao encontrada");
-        }
-
-        if (userId !== campanha.criado_por) {
-            throw new Error("Apenas o mestre pode aprovar alteracoes");
-        }
+        await this.validarMestreDaCampanha.executar(personagem.campanha_id, userId);
 
         const campos = extrairCamposAtributo(pendencia);
         await this.personagemRepository.aplicarAlteracao(

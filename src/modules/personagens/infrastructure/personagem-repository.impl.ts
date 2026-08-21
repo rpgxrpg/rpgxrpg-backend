@@ -16,6 +16,15 @@ export class PersonagemRepositoryImplementation implements IPersonagemRepository
         return await this.prisma.personagem.findUnique({ where: { id } })
     }
 
+    async listarPendentesPorCampanha(campanhaId: number): Promise<PersonagemEntity[]> {
+        return await this.prisma.personagem.findMany({
+            where: {
+                campanha_id: campanhaId,
+                status_aprovacao: StatusAprovacao.pendente,
+            },
+        })
+    }
+
     async atualizarStatus(id: number, status: StatusAprovacao): Promise<void> {
         await this.prisma.personagem.update({
             where: { id },

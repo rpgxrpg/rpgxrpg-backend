@@ -1,11 +1,11 @@
 import { StatusAprovacao } from "../../../generated/prisma/enums";
-import { ICampanhaRepository } from "../../campanhas/domain/campanha-repository.interface";
+import { ValidarMestreDaCampanha } from "../../../shared/application/validar-mestre-da-campanha.usecase";
 import { IPersonagemRepository } from "../domain/personagem-repository.interface";
 
 export class AprovarPersonagemUseCase {
     constructor(
         private personagemRepository: IPersonagemRepository,
-        private campanhaRepository: ICampanhaRepository
+        private validarMestreDaCampanha: ValidarMestreDaCampanha,
     ) {}
 
     async executar(personagemId: number, quemAprova: number): Promise<void> {
@@ -13,20 +13,13 @@ export class AprovarPersonagemUseCase {
         if (!personagem) {
             throw new Error("Personagem nao encontrado")
         }
-    
-        const campanha = await this.campanhaRepository.buscarPorId(personagem.campanha_id)
-        if (!campanha) {
-            throw new Error("Campanha nao encontrada")
-        }
-    
-        if (quemAprova !== campanha.criado_por) {
-            throw new Error("Apenas o mestre pode aprovar personagens")
-        }
-    
+
+        await this.validarMestreDaCampanha.executar(personagem.campanha_id, quemAprova)
+
         if (personagem.status_aprovacao !== StatusAprovacao.pendente) {
             throw new Error("Personagem ja foi aprovado ou rejeitado")
         }
-    
+
         await this.personagemRepository.atualizarStatus(personagemId, StatusAprovacao.aprovada)
     }
 }

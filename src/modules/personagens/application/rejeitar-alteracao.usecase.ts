@@ -1,4 +1,4 @@
-import { ICampanhaRepository } from "../../campanhas/domain/campanha-repository.interface";
+import { ValidarMestreDaCampanha } from "../../../shared/application/validar-mestre-da-campanha.usecase";
 import { IAlteracaoPendenteRepository } from "../domain/alteracao-pendente-repository.interface";
 import { IPersonagemRepository } from "../domain/personagem-repository.interface";
 
@@ -6,7 +6,7 @@ export class RejeitarAlteracaoUseCase {
     constructor(
         private alteracaoPendenteRepository: IAlteracaoPendenteRepository,
         private personagemRepository: IPersonagemRepository,
-        private campanhaRepository: ICampanhaRepository,
+        private validarMestreDaCampanha: ValidarMestreDaCampanha,
     ) {}
 
     async executar(alteracaoId: number, userId: number): Promise<void> {
@@ -20,14 +20,7 @@ export class RejeitarAlteracaoUseCase {
             throw new Error("Personagem nao encontrado");
         }
 
-        const campanha = await this.campanhaRepository.buscarPorId(personagem.campanha_id);
-        if (!campanha) {
-            throw new Error("Campanha nao encontrada");
-        }
-
-        if (userId !== campanha.criado_por) {
-            throw new Error("Apenas o mestre pode rejeitar alteracoes");
-        }
+        await this.validarMestreDaCampanha.executar(personagem.campanha_id, userId);
 
         await this.alteracaoPendenteRepository.deletar(alteracaoId);
     }

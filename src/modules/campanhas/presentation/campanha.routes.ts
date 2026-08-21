@@ -9,17 +9,19 @@ import { TokenServiceImplementation } from '../../usuarios/infrastructure/token-
 import { ConvidarJogadorUseCase } from '../application/convidar-jogador.usecase';
 import { ConvidarJogadorController } from './convidar-jogador.controller';
 import { UsuarioRepositoryImplementation } from '../../usuarios/infrastructure/usuario-repository.impl';
+import { ValidarMestreDaCampanha } from "../../../shared/application/validar-mestre-da-campanha.usecase";
 
 const router = Router();
 const prisma = new PrismaClient();
 const campanhaRepository = new CampanhaRepositoryImplementation(prisma);
 const conviteRepository = new ConviteRepositoryImplementation(prisma);
 const usuarioRepository = new UsuarioRepositoryImplementation(prisma);
+const validarMestreDaCampanha = new ValidarMestreDaCampanha(campanhaRepository);
 const tokenService = new TokenServiceImplementation();
 const authMiddleware = criarAuthMiddleware(tokenService);
 const criarCampanhaUseCase = new CriarCampanhaUseCase(campanhaRepository);
 const criarCampanhaController = new CriarCampanhaController(criarCampanhaUseCase);
-const convidarJogadorUseCase = new ConvidarJogadorUseCase(conviteRepository, usuarioRepository, campanhaRepository);
+const convidarJogadorUseCase = new ConvidarJogadorUseCase(conviteRepository, usuarioRepository, validarMestreDaCampanha);
 const convidarJogadorController = new ConvidarJogadorController(convidarJogadorUseCase);
 
 /**

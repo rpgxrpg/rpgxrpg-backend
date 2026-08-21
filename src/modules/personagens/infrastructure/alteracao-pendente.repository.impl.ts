@@ -17,6 +17,12 @@ export class AlteracaoPendenteRepository implements IAlteracaoPendenteRepository
     return this.prisma.alteracaoPendente.findFirst({ where: { personagem_id: personagemId } });
   }
 
+  async listarPorCampanha(campanhaId: number): Promise<AlteracaoPendenteEntity[]> {
+    return this.prisma.alteracaoPendente.findMany({
+      where: { personagem: { campanha_id: campanhaId } },
+    });
+  }
+
   async deletar(id: number): Promise<void> {
     await this.prisma.alteracaoPendente.delete({ where: { id } });
   }

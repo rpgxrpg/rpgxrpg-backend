@@ -10,6 +10,7 @@ import { RejeitarPersonagemController } from './rejeitar-personagem.controller';
 import { CriarNpcUseCase } from '../application/criar-npc.usecase';
 import { CriarNpcController } from './criar-npc.controller';
 import { CampanhaRepositoryImplementation } from '../../campanhas/infrastructure/campanha-repository.impl';
+import { ValidarMestreDaCampanha } from "../../../shared/application/validar-mestre-da-campanha.usecase";
 import { criarAuthMiddleware } from '../../../shared/middlewares/auth.middleware';
 import { TokenServiceImplementation } from '../../usuarios/infrastructure/token-service.impl';
 import { CriarInvocacaoUseCase } from '../application/criar-invocacao.usecase';
@@ -21,25 +22,26 @@ const router               = Router();
 const prisma               = new PrismaClient();
 const personagemRepository = new PersonagemRepositoryImplementation(prisma);
 const campanhaRepository   = new CampanhaRepositoryImplementation(prisma);
+const validarMestreDaCampanha = new ValidarMestreDaCampanha(campanhaRepository);
 const tokenService         = new TokenServiceImplementation();
 const authMiddleware       = criarAuthMiddleware(tokenService);
 
 const criarPersonagemUseCase    = new CriarPersonagemUseCase(personagemRepository, campanhaRepository);
 const criarPersonagemController = new CriarPersonagemController(criarPersonagemUseCase);
 
-const aprovarPersonagemUseCase    = new AprovarPersonagemUseCase(personagemRepository, campanhaRepository);
+const aprovarPersonagemUseCase    = new AprovarPersonagemUseCase(personagemRepository, validarMestreDaCampanha);
 const aprovarPersonagemController = new AprovarPersonagemController(aprovarPersonagemUseCase);
 
-const rejeitarPersonagemUseCase    = new RejeitarPersonagemUseCase(personagemRepository, campanhaRepository);
+const rejeitarPersonagemUseCase    = new RejeitarPersonagemUseCase(personagemRepository, validarMestreDaCampanha);
 const rejeitarPersonagemController = new RejeitarPersonagemController(rejeitarPersonagemUseCase);
 
-const criarNpcUseCase    = new CriarNpcUseCase(personagemRepository, campanhaRepository);
+const criarNpcUseCase    = new CriarNpcUseCase(personagemRepository, validarMestreDaCampanha);
 const criarNpcController = new CriarNpcController(criarNpcUseCase);
 
 const criarInvocacaoUseCase    = new CriarInvocacaoUseCase(personagemRepository);
 const criarInvocacaoController = new CriarInvocacaoController(criarInvocacaoUseCase);
 
-const distribuirXpUseCase    = new DistribuirXpUseCase(personagemRepository, campanhaRepository);
+const distribuirXpUseCase    = new DistribuirXpUseCase(personagemRepository, validarMestreDaCampanha);
 const distribuirXpController = new DistribuirXpController(distribuirXpUseCase);
 
 router.post("/personagens", authMiddleware, (req, res) => criarPersonagemController.handle(req, res));
