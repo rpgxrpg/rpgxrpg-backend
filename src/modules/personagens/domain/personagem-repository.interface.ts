@@ -21,6 +21,7 @@ export type CamposAtributoPersonagem = Partial<
 export interface IPersonagemRepository {
   criar(personagem: PersonagemEntity): Promise<PersonagemEntity>;
   buscarPorId(id: number): Promise<PersonagemEntity | null>
+  listarPorCampanha(campanhaId: number): Promise<PersonagemEntity[]>
   listarPendentesPorCampanha(campanhaId: number): Promise<PersonagemEntity[]>
   atualizarStatus(id: number, status: StatusAprovacao): Promise<void>
   atualizarXpLivre(id: number, novoTotal: number): Promise<void>
