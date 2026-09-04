@@ -10,4 +10,8 @@ export class ArmaRepositoryImplementation implements IArmaRepository {
         const created = await this.prisma.arma.create({ data: dados });
         return created;
     }
+
+    async listarPorCampanha(campanhaId: number): Promise<ArmaEntity[]> {
+        return await this.prisma.arma.findMany({ where: { campanha_id: campanhaId } });
+    }
 }
