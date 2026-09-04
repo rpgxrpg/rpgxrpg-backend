@@ -52,6 +52,34 @@ enum TipoFicha {
   npc
 }
 
+enum FamiliaArma {
+  laminas_curtas
+  laminas_longas
+  contundentes_curtas
+  contundentes_longas
+  lancas
+  machados
+  pistolas
+  escopetas
+  submetralhadoras
+  fuzis_assalto
+  fuzis_precisao
+  metralhadoras_pesadas
+  lanca_chamas
+  lanca_granadas
+  lanca_foguetes
+  outros_propulsao
+  outros_flexiveis
+  outros_exoticas
+}
+
+enum AlcanceArma {
+  corpo_corpo
+  curto
+  medio
+  longo
+}
+
 enum StatusConvite {
   aceito
   recusado
@@ -86,6 +114,7 @@ model Campanha {
   participantes UsuarioCampanha[]
   convites      Convite[]
   personagens   Personagem[]
+  armas         Arma[]
   @@map("campanha")
 }
 
@@ -173,4 +202,44 @@ model AlteracaoPendente {
   personagem Personagem @relation(fields: [personagem_id], references: [id])
 
   @@map("alteracao_pendente")
+}
+
+model Arma {
+  id           Int           @id @default(autoincrement())
+  nome         String
+  familia      FamiliaArma
+  campanha_id  Int?
+  custo        Int
+  pa           Int
+  dano         String
+  precisao_min AlcanceArma?
+  precisao_max AlcanceArma?
+  maximo_min   AlcanceArma?
+  maximo_max   AlcanceArma?
+
+  campanha     Campanha?         @relation(fields: [campanha_id], references: [id])
+  propriedades ArmaPropriedade[]
+
+  @@map("arma")
+}
+
+model PropriedadeArma {
+  id        Int     @id @default(autoincrement())
+  nome      String
+  descricao String?
+
+  armas     ArmaPropriedade[]
+
+  @@map("propriedade_arma")
+}
+
+model ArmaPropriedade {
+  arma_id             Int
+  propriedade_arma_id Int
+
+  arma        Arma            @relation(fields: [arma_id], references: [id])
+  propriedade PropriedadeArma @relation(fields: [propriedade_arma_id], references: [id])
+
+  @@id([arma_id, propriedade_arma_id])
+  @@map("arma_propriedade")
 }
